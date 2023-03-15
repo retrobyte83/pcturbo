@@ -69,7 +69,7 @@ word_10A	dw 7275h		; DATA XREF: sub_15AB+10r
 		db  31h	; 1
 		db  2Eh	; .
 		db  32h	; 2
-		db  38h	; 8
+		db  36h	; 6
 		db  20h
 		db  20h
 		db  24h	; $
@@ -2381,7 +2381,7 @@ str_0A0Eh		db  0Dh
 		db  20h
 		db  0Dh
 		db  24h	; $
-		db  54h	; T
+str_0A33h		db  54h	; T
 		db  68h	; h
 		db  65h	; e
 		db  20h
@@ -3380,7 +3380,7 @@ loc_EF8:				; CODE XREF: start+DD7j start+DE0j ...
 		jz	short loc_F0B
 		mov	si, str_3F9h
 		call	sub_1789
-		mov	si, 0A33h
+		mov	si, str_0A33h
 		call	sub_1789
 
 loc_F0B:				; CODE XREF: start+DFDj
@@ -4790,14 +4790,14 @@ sub_1862:;	proc near		; CODE XREF: start+10E4p
 		db 0EEh	; �
 		db 0C3h	; �
 		db    0
-str_18a0		db  31h	; 1
-		db  31h	; 1
+str_18a0 db  30h	; 0
+		db  36h	; 6
 		db  2Fh	; /
 		db  30h	; 0
-		db  33h	; 3
+		db  35h	; 5
 		db  2Fh	; /
-		db  32h	; 2
-		db  33h	; 3
+		db  38h	; 8
+		db  37h	; 7
 		db  24h	; $
 		db    0
 		db    0
@@ -24877,12 +24877,12 @@ bios_48E0h		db 0FAh	; �
 		db    0
 		db    0
 		db    0
-		db 090h	; �
-		db 0B0h   0
-		db 01Fh	; �
-		db 0E6h   0
-		db 080h	; �
-		db 0F4h	; 1
+		db 0EAh	; �
+		db  00h   0
+		db 0E0h	; �
+		db  00h   0
+		db 0F0h	; �
+		db  31h	; 1
 		db  31h	; 1
 		db  2Fh	; /
 		db  30h	; 0
