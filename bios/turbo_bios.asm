@@ -467,10 +467,10 @@ loc_215:				; CODE XREF: seg000:loc_215j
 		push	aLRightsReserve ; "l Rights Reserved.\n\r$"
 		pop	ds
 
-		mov	word ds:1Ah, 1Eh
-		mov	word ds:1Ch, 1Eh
-		mov	word ds:80h, 1Eh
-		mov	word ds:82h, 3Eh ; '>'
+		mov	word [1Ah], 1Eh
+		mov	word [1Ch], 1Eh
+		mov	word [80h], 1Eh
+		mov	word [82h], 3Eh ; '>'
 		pop	ds
 
 		mov	al, 0BCh ; '�'
@@ -504,7 +504,7 @@ loc_263:				; CODE XREF: seg000:0252j
 		mov	di, 0E0AEh
 		cmp	byte [di], 0
 		jz	short loc_28C
-		mov	byte ds:0E06Dh, 1
+		mov	byte [0E06Dh], 1
 		jmp	short loc_291
 ; ���������������������������������������������������������������������������
 		nop
@@ -516,7 +516,7 @@ loc_28C:				; CODE XREF: seg000:0272j seg000:027Aj ...
 ; ���������������������������������������������������������������������������
 
 loc_291:				; CODE XREF: seg000:0289j
-		mov	byte ds:0E06Dh, 1
+		mov	byte [0E06Dh], 1
 		mov	dx, 400h
 		out	dx, al
 
@@ -652,9 +652,9 @@ loc_325:				; CODE XREF: seg000:0260j seg000:038Ej ...
 		mov	ax, 0C000h
 		mov	ds, ax
 
-		cmp	word ds:0, 0AA55h
+		cmp	word [0], 0AA55h
 		jnz	short loc_349
-		call [cs:0E345h]
+		call far [cs:0E345h]
 		jmp	short loc_349
 ; ���������������������������������������������������������������������������
 		db    3
@@ -1372,7 +1372,7 @@ word_482	dw 8700h		; DATA XREF: seg000:023Aw
 		db    2
 		db    6
 		db 0E8h	; �
-		db  5Ch	; \
+		db  5Ch	; 
 		db 0FCh	; �
 		db 0C6h	; �
 		db    5
@@ -3007,7 +3007,7 @@ loc_678:				; CODE XREF: sub_663+Cj
 		db 0F6h	; �
 		db  5Eh	; ^
 		db  8Bh	; �
-		db  5Ch	; \
+		db  5Ch	; 
 		db    6
 		db  8Bh	; �
 		db  4Ch	; L
@@ -3260,7 +3260,7 @@ loc_678:				; CODE XREF: sub_663+Cj
 		db 0FEh	; �
 		db 0FEh	; �
 		db 0FEh	; �
-		db  5Ch	; \
+		db  5Ch	; 
 		db  7Ch	; |
 		db  1Ch
 		db 0FEh	; �
