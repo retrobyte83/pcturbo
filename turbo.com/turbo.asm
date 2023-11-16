@@ -36,7 +36,7 @@
 
 		push	cs
 		pop	ds
-		jmp	loc_CAD
+		jmp	loc_CAD  ; jump to start of code at 0xCAD
 ; ���������������������������������������������������������������������������
 		db  66h	; f
 		db    0
@@ -3025,13 +3025,13 @@ loc_CAD:				; CODE XREF: start+2j
 		mov	sp, 3A2h
 		sti
 		cld
-		mov	si, str_107
+		mov	si, str_107  
 
-		call	sub_1789
+		call	sub_1789 ; print PCTurbo 286e System Version 1.26
 		mov	si, str_18a0
-		call	sub_1789
+		call	sub_1789 ; print 06/05/87
 		mov	si, str_12a
-		call	sub_1789
+		call	sub_1789 ; print (C) Copyright 1986 More Computing. All Rights Reserved.
 		push	es
 		mov	si, str_80Bh
 		mov	ax, 0F000h
@@ -3039,12 +3039,12 @@ loc_CAD:				; CODE XREF: start+2j
 
 		mov	di, 0E00Ah
 		mov	cx, 0Bh
-		repe cmpsb
-		pop	es
+		repe cmpsb		; check location 0xE00A for the string PCTurbo 286
+		pop	es			; to see if they PCTurbo is already running
 
-		jnz	short loc_CEB
+		jnz	short loc_CEB 	; PCTurbo not running
 		mov	si, str_6D2
-		call	sub_1789
+		call	sub_1789 ; print Already executing on the PCturbo 286!
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h
 ; ���������������������������������������������������������������������������
@@ -3060,10 +3060,10 @@ loc_CEB:				; CODE XREF: start+BE1j
 		mov	si, str_2403
 		mov	cx, 6
 		cld
-		repe cmpsw
+		repe cmpsw			; compare es:38h with PCturb
 		jnz	short loc_D0B
 		mov	si, str_71b
-		call	sub_1789
+		call	sub_1789	; Turbo already loaded. (/! option used. Use Alt grey+ to swap)
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h
 ; ���������������������������������������������������������������������������
@@ -3076,19 +3076,19 @@ loc_D0B:				; CODE XREF: start+C01j
 		mov	si, str_c09
 		mov	cx, 6
 		cld
-		repe cmpsb
+		repe cmpsb			; Compare 0FFEAh with word COMPAQ
 		jnz	short loc_D28
-		mov	byte [byte_C08], 1
+		mov	byte [byte_C08], 1  
 		mov	byte [byte_172], 1
 
 loc_D28:				; CODE XREF: start+C1Cj
-		mov	si, 80h
+		mov	si, 80h		
 		lodsb
-		cmp	al, 0
+		cmp	al, 0		; check if there are any parameters
 		jnz	short loc_D33
 
 loc_D30:				; CODE XREF: start+C44j
-		jmp	loc_ECF
+		jmp	loc_ECF		; no command line parameters
 ; ���������������������������������������������������������������������������
 
 loc_D33:				; CODE XREF: start+C2Ej
@@ -3315,12 +3315,12 @@ sub_E88:;		proc near		; CODE XREF: start+C46p start+C52p ...
 loc_E8F:				; CODE XREF: start+C6Ej start:loc_D77j ...
 		mov	di, si
 		mov	si, str_3fc
-		call	sub_1789
+		call	sub_1789 ; print Error in command argument string
 		mov	si, 81h
 		call	sub_1789
-		mov	si, str_3F9h
+		mov	si, str_3F9h ; print new line
 		call	sub_1789
-		mov	si, str_41f
+		mov	si, str_41f  ; print lots of spaces
 		call	sub_1789
 		cmp	di, 82h
 
@@ -3342,7 +3342,7 @@ loc_EB5:				; CODE XREF: sub_E88+35j
 					; BL = foreground color	(graphics modes)
 
 loc_EC7:				; CODE XREF: sub_E88+25j
-		mov	si, str_3F9h
+		mov	si, str_3F9h  ; print newline
 		call	sub_1789
 		int	20h		; DOS -	PROGRAM	TERMINATION
 ;sub_E88		endp			; returns to DOS--identical to INT 21/AH=00h
@@ -3357,20 +3357,21 @@ loc_ECF:				; CODE XREF: start:loc_D30j start+D83j
 					; DS:DX	-> ASCIZ filename
 					; AL = access mode
 					; 0 - read
-		jb	short loc_EF8
+		jb	short loc_EF8	; Detect for presence of EMM (EMMXXXX0), if not present jump to EF8h
 		mov	ah, 41h
 		int	67h		;  - LIM EMS - GET PAGE	FRAME SEGMENT
 					; Return: AH = 00h function successful,	BX = segment of	page frame
 					; AH = error code
 		cmp	ah, 0
-		jnz	short loc_EF8
+		jnz	short loc_EF8  
 		and	bx, 0F000h
 		mov	ax, [word_182]
 		and	ax, 0F000h
 		cmp	bx, ax
-		jnz	short loc_EF8
+		jnz	short loc_EF8	; Turbo.com and EMM don't share same memory segment
 		mov	si, str_610h
-		call	sub_1789
+		call	sub_1789  ; print STARTUP ERROR - Extended Memory (EMM) driver installed at same memory segment address as TURBO.COM
+					      ;	Please RE-INSTALL your PCturbo 286e system software.
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h
 ; ���������������������������������������������������������������������������
@@ -3378,17 +3379,17 @@ loc_ECF:				; CODE XREF: start:loc_D30j start+D83j
 loc_EF8:				; CODE XREF: start+DD7j start+DE0j ...
 		cmp	byte [byte_16C], 0
 		jz	short loc_F0B
-		mov	si, str_3F9h
+		mov	si, str_3F9h   ; print new line
 		call	sub_1789
-		mov	si, str_0A33h
+		mov	si, str_0A33h  ; print The /S option of the turbo command is not currently supported.
 		call	sub_1789
 
 loc_F0B:				; CODE XREF: start+DFDj
 		cmp	byte [byte_CAC], 1
 		jnz	short loc_F1E
-		mov	si, str_3F9h
+		mov	si, str_3F9h  ; print new line
 		call	sub_1789
-		mov	si, str_0A74h
+		mov	si, str_0A74h ; print Coprocessing Version of PCturbo 286e System
 		call	sub_1789
 
 loc_F1E:				; CODE XREF: start+E10j
@@ -3398,45 +3399,45 @@ loc_F1E:				; CODE XREF: start+E10j
 		jmp	loc_102E
 
 loc_F28:				; CODE XREF: start+E23j
-		mov	si, str_816h
+		mov	si, str_816h  ; print TURBO Command Software Configuration:
 		call	sub_1789
-		mov	si, str_3F9h
+		mov	si, str_3F9h  ; print new line
 		call	sub_1789
-		mov	si, str_83Eh
+		mov	si, str_83Eh  ; print Dual Port Memory Address ....
 		call	sub_1789
 		mov	ax, [word_182]
 		call	sub_17BA
-		mov	si, str_860h
+		mov	si, str_860h  ; print :0 (hex)
 		call	sub_1789
-		mov	si, str_86Bh
+		mov	si, str_86Bh  ; print I/O Port Address ......
 		call	sub_1789
 		mov	ax, [word_180]
 		call	sub_17BA
-		mov	si, str_88Dh
+		mov	si, str_88Dh  ; to 
 		call	sub_1789
 		mov	ax, [word_180]
 		add	ax, 7
 		call	sub_17BA
-		mov	si, str_3F9h
+		mov	si, str_3F9h  ; print new line
 		call	sub_1789
-		mov	si, str_892h
+		mov	si, str_892h  ; print Interrupt Request Line ....
 		call	sub_1789
 		mov	al, [byte_16B]
 		xor	ah, ah
 		call	sub_1801
-		mov	si, str_3F9h
+		mov	si, str_3F9h  ; print new line
 		call	sub_1789
-		mov	si, str_903h
+		mov	si, str_903h  ; DOS Memory Size on PCTurbo... 
 		call	sub_1789
 		mov	ax, [word_186]
 		call	sub_1801
-		mov	si, str_3F9h
+		mov	si, str_3F9h ; print new line
 		call	sub_1789
-		mov	si, str_8D6h
+		mov	si, str_8D6h ; Hard Disk boot flag ...... 
 		call	sub_1789
 		cmp	byte [byte_170], 1
 		jz	short loc_FA3
-		mov	si, str_8FDh
+		mov	si, str_8FDh ; print OFF
 		call	sub_1789
 		jmp	short loc_FA9
 ; END OF FUNCTION CHUNK	FOR start
@@ -3446,21 +3447,21 @@ loc_F28:				; CODE XREF: start+E23j
 ; START	OF FUNCTION CHUNK FOR start
 
 loc_FA3:				; CODE XREF: start+E98j
-		mov	si, str_8F8h
+		mov	si, str_8F8h ; print ON
 		call	sub_1789
 
 loc_FA9:				; CODE XREF: start+EA0j
 		cmp	byte [byte_175], 1
 		jnz	short loc_FB6
-		mov	si, str_925h
+		mov	si, str_925h ; print Hercules Mono Graphics Adapter Installed
 		call	sub_1789
 
 loc_FB6:				; CODE XREF: start+EAEj
 		cmp	byte [byte_18A], 1
 		jnz	short loc_FCC
-		mov	si, str_951h
+		mov	si, str_951h ; print Orchid DBUS EGA Card Installed
 		call	sub_1789
-		mov	si, str_3F9h
+		mov	si, str_3F9h ; print new line
 		call	sub_1789
 		jmp	short loc_FE8
 ; END OF FUNCTION CHUNK	FOR start
@@ -3470,11 +3471,11 @@ loc_FB6:				; CODE XREF: start+EAEj
 ; START	OF FUNCTION CHUNK FOR start
 
 loc_FCC:				; CODE XREF: start+EBBj
-		mov	si, str_8B4h
+		mov	si, str_8B4h ; print Fast color/graphics update
 		call	sub_1789
 		cmp	byte [byte_172], 1
 		jz	short loc_FE2
-		mov	si, str_8FDh
+		mov	si, str_8FDh ; print OFF
 		call	sub_1789
 		jmp	short loc_FE8
 ; END OF FUNCTION CHUNK	FOR start
@@ -3484,7 +3485,7 @@ loc_FCC:				; CODE XREF: start+EBBj
 ; START	OF FUNCTION CHUNK FOR start
 
 loc_FE2:				; CODE XREF: start+ED7j
-		mov	si, str_8F8h
+		mov	si, str_8F8h ; print ON
 		call	sub_1789
 
 loc_FE8:				; CODE XREF: start+EC9j start+EDFj
@@ -3492,9 +3493,9 @@ loc_FE8:				; CODE XREF: start+EC9j start+EDFj
 		jnz	short loc_1011
 		cmp	byte [byte_16F], 1
 		jnz	short loc_1005
-		mov	si, str_9A1h
+		mov	si, str_9A1h ; print Memory Daughtercard Installed as EMS memory
 		call	sub_1789
-		mov	si, str_3F9h
+		mov	si, str_3F9h ; print new line
 		call	sub_1789
 		jmp	short loc_1011
 ; END OF FUNCTION CHUNK	FOR start
@@ -3504,20 +3505,20 @@ loc_FE8:				; CODE XREF: start+EC9j start+EDFj
 ; START	OF FUNCTION CHUNK FOR start
 
 loc_1005:				; CODE XREF: start+EF4j
-		mov	si, str_973h
+		mov	si, str_973h ; print Memory Daughtercard Installed as AT memory
 		call	sub_1789
-		mov	si, str_3F9h
+		mov	si, str_3F9h ; print new line
 		call	sub_1789
 
 loc_1011:				; CODE XREF: start+EEDj start+F02j
-		mov	si, str_3F9h
+		mov	si, str_3F9h ; print new line
 		call	sub_1789
-		mov	si, str_9D0h
+		mov	si, str_9D0h ; print Hit Any key to Continue
 		call	sub_1789
 		mov	ah, 1
 		int	21h		; DOS -	KEYBOARD INPUT
 					; Return: AL = character read
-		mov	si, str_3F9h
+		mov	si, str_3F9h  ; print new line
 		call	sub_1789
 		mov	cx, 0
 
@@ -3549,7 +3550,7 @@ loc_1059:				; CODE XREF: start+F52j
 		push	ds
 		mov	si, 0
 		mov	ds, si
-		mov	di, 0C1Fh
+		mov	di, str_0C1Fh
 		push	cs
 		pop	es
 
@@ -3564,7 +3565,7 @@ loc_1059:				; CODE XREF: start+F52j
 		call	sub_1854
 		mov	es, [word_182]
 
-		mov	si, str_80Bh
+		mov	si, str_80Bh  ; PCturbo 286
 		mov	di, 0E00Ah
 		mov	cx, 0Bh
 		repe cmpsb
@@ -3620,8 +3621,8 @@ loc_10C4:				; CODE XREF: start+F79j start+F92j ...
 ; START	OF FUNCTION CHUNK FOR start
 
 loc_1118:				; CODE XREF: start+100Aj start+1013j
-		mov	si, str_3A3h
-		call	sub_1789
+		mov	si, str_3A3h  
+		call	sub_1789  ; print Cannot access the PCturbo 286e Card. Please check all board jumpers and try again.
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h
 ; ���������������������������������������������������������������������������
@@ -3636,7 +3637,7 @@ loc_1120:				; CODE XREF: start+1015j
 		mov	si, bios_48E0h
 		cmp	byte [si], 0FAh
 		jz	short loc_1140
-		mov	si, str_5D7h
+		mov	si, str_5D7h ; print Internal format error - 286 bios code missing
 		call	sub_1789
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h
@@ -3662,7 +3663,8 @@ loc_1140:				; CODE XREF: start+1036j
 		mov	si, 0
 		cmp	word es:[si], 0
 		jz	short loc_1184
-		mov	si, str_498h
+		mov	si, str_498h  ; STARTUP ERROR - cannot access daughtercard memory as configured. This TURBO.COM has been configured for a memory daughtercard acting as AT - style
+						  ; expansion memory, but the daughtercard cannot be accessed. Check the mainboard's 1M/2M jumper (should be 2M), and re-install.
 		call	sub_1789
 		jmp	short loc_11B5
 ; END OF FUNCTION CHUNK	FOR start
@@ -3672,7 +3674,7 @@ loc_1140:				; CODE XREF: start+1036j
 ; START	OF FUNCTION CHUNK FOR start
 
 loc_1184:				; CODE XREF: start+1079j
-		mov	si, str_9EBh
+		mov	si, str_9EBh ; print Initializing 1 Meg daughtercard...
 		call	sub_1789
 		mov	bl, 10h
 
@@ -3686,7 +3688,7 @@ loc_118C:				; CODE XREF: start+10A1j
 		inc	bl
 		cmp	bl, 20h
 		jnz	short loc_118C
-		mov	si, str_0A0Eh
+		mov	si, str_0A0Eh ; print lots of spaces
 		call	sub_1789
 		mov	al, 0Fh
 		call	sub_1854
@@ -3855,7 +3857,7 @@ loc_1323:				; CODE XREF: start+1219j
 		add	dx, 20h
 		cmp	dx, cs:2
 		jbe	short loc_1359
-		mov	si, str_7CAh
+		mov	si, str_7CAh  ; print STARTUP ERROR - Not enough memory to load program. $286BIOS.BIN
 		mov	al, 4
 		jmp	loc_17B3
 ; ���������������������������������������������������������������������������
@@ -4013,7 +4015,7 @@ loc_14AE:				; CODE XREF: start+13B6j
 		loop	loc_14AE
 		dec	bl
 		jnz	short loc_14AC
-		mov	si, str_442h
+		mov	si, str_442h  ; print PCturbo 286 Card not responding. Please check all board jumpers and try again.
 		call	sub_1789
 		jmp	short loc_1508
 ; END OF FUNCTION CHUNK	FOR start
@@ -4117,7 +4119,7 @@ loc_157D:				; CODE XREF: start+1478j
 		mov	es, ax
 
 		and	byte  es:17h, 0F0h
-		mov	si, str_6FAh
+		mov	si, str_6FAh ; print Now executing on host machine.
 		call	sub_1789
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h
@@ -4273,10 +4275,10 @@ loc_1657:				; CODE XREF: sub_1637+Dj sub_1637+1Cj
 
 
 sub_1659:;	proc near		; CODE XREF: sub_1637+Ap sub_1637+19p
-		mov	si, str_15E2h
+		mov	si, str_15E2h   ; ORCHID CGA EMUL
 		call	sub_1670
 		jz	short locret_166F
-		mov	si, str_15F1h
+		mov	si, str_15F1h   ; ORCHID CGA EMUL
 		call	sub_1670
 		jnz	short locret_166F
 		pushf
@@ -4399,7 +4401,7 @@ sub_16F9:;	proc near		; CODE XREF: start+1430p
 		out	21h, al		; Interrupt controller,	8259A.
 		mov	di, 0
 		mov	es, di
-		mov	si, str_0C1Fh
+		mov	si, str_0C1Fh  ; 0
 		push	cs
 		pop	ds
 		mov	cx, 88h
@@ -4417,7 +4419,7 @@ sub_16F9:;	proc near		; CODE XREF: start+1430p
 		int 17h
 		mov byte es:[di+5],ah
 		ret
-
+str_1720h:
 		db  0Ah
 		db  0Dh
 		db  21h	; !
@@ -4458,71 +4460,43 @@ sub_16F9:;	proc near		; CODE XREF: start+1430p
 		db  0Ah
 		db  0Dh
 		db  24h	; $
-		db  80h	; �
-		db  3Eh	; >
-		db 0ACh	; �
-		db  0Ch
-		db    1
-		db  75h	; u
-		db  1Eh
-		db 0C6h	; �
-		db    6
-		db  0Fh
-		db  2Dh	; -
-		db    0
-		db  1Eh
-		db 0B8h	; �
-		db  40h	; @
-		db    0
-		db  8Eh	; �
-		db 0D8h	; �
-		db 0C6h	; �
-		db    6
-		db  17h
-		db    0
-		db    0
-		db  1Fh
-		db  26h	; &
-		db 0C6h	; �
-		db    6
-		db 0DFh	; �
-		db 0E0h	; �
-		db    0
-		db 0BEh	; �
-		db  20h
-		db  17h
-		db 0E8h	; �
-		db  1Dh
-		db    0
-		db 0C3h	; �
-		db 0C6h	; �
-		db    6
-		db 0A8h	; �
-		db  0Ch
-		db    1
-		db 0C3h	; �
-		db 0B9h	; �
-		db  0Ah
-		db    0
-		db  33h	; 3
-		db 0D2h	; �
-		db 0F7h	; �
-		db 0F1h	; �
-		db  80h	; �
-		db 0C2h	; �
-		db  30h	; 0
-		db  2Eh	; .
-		db  88h	; �
-		db  14h
-		db  3Dh	; =
-		db    0
-		db    0
-		db  74h	; t
-		db    3
-		db  4Eh	; N
-		db 0EBh	; �
-		db 0EEh	; �
-		db 0C3h	; �
+
+                cmp     byte [byte_CAC], 1
+                jnz     short loc_175F
+                mov     byte [byte_2D0F], 0
+                push    ds
+                mov     ax, 40h
+                mov     ds, ax
+                
+                mov     byte [17h], 0
+                pop     ds
+                
+                mov     byte [es:0E0DFh], 0
+                mov     si, str_1720h  ; print ! HOST active. (Alt-grey + to swap)
+                call    sub_1789
+                retn
+; ---------------------------------------------------------------------------
+
+loc_175F:                               ; CODE XREF: seg000:173Fj
+                mov     byte [byte_CA8], 1
+                retn
+; ---------------------------------------------------------------------------
+                mov     cx, 0Ah
+
+loc_1768:                               ; CODE XREF: seg000:1778j
+                xor     dx, dx
+                div     cx
+                add     dl, 30h
+                mov     cs:[si], dl
+                cmp     ax, 0
+                jz      short locret_177A
+                dec     si
+                jmp     short loc_1768
+; ---------------------------------------------------------------------------
+
+locret_177A:                            ; CODE XREF: seg000:1775j
+                retn
+
 
 ; ��������������� S U B	R O U T	I N E ���������������������������������������
 
@@ -4555,22 +4529,22 @@ loc_179E:				; CODE XREF: sub_1789+Cj
 ;sub_1789	endp
 
 ; ���������������������������������������������������������������������������
-		db 0B8h	; �
-		db    7
-		db  0Eh
-		db 0CDh	; �
-		db  10h
-		db 0B9h	; �
-		db    0
-		db    0
-		db 0E2h	; �
-		db 0FEh	; �
-		db 0B4h	; �
-		db  0Bh
-		db 0CDh	; �
-		db  21h	; !
-		db 0EBh	; �
-		db 0F0h	; �
+
+loc_1795:                               ; CODE XREF: seg000:17A3j
+                mov     ax, 0E07h
+                int     10h             ; - VIDEO - WRITE CHARACTER AND ADVANCE CURSOR (TTY WRITE)
+                                        ; AL = character, BH = display page (alpha modes)
+                                        ; BL = foreground color (graphics modes)
+                mov     cx, 0
+
+loc_179D:                               ; CODE XREF: seg000:loc_179Dj
+                loop    loc_179D
+                mov     ah, 0Bh
+                int     21h             ; DOS - CHECK STANDARD INPUT STATUS
+                                        ; Return: AL = FFh if character available
+                                        ; 00h if no character
+                jmp     short loc_1795
+
 ; ���������������������������������������������������������������������������
 ; START	OF FUNCTION CHUNK FOR start
 
@@ -4744,51 +4718,29 @@ sub_1862:;	proc near		; CODE XREF: start+10E4p
 ;sub_1862	endp
 
 ; ���������������������������������������������������������������������������
-
-
+ 
+ ; ---------------------------------------------------------------------------
+                mov     dx, cs:word_180
+                add     dl, 3
+                cli
+				mov     al, cs:byte_CA7
+                and     al, 0F7h
+                mov     cs:byte_CA7, al
+                sti
+                out     dx, al
+                jmp     short $+2
+                jmp     short $+2
+                jmp     short $+2
+                cli
+                mov     al, cs:byte_CA7
+                or      al, 8
+                mov     cs:byte_CA7, al
+                sti
+                out     dx, al
+                retn
 
 ; ���������������������������������������������������������������������������
-		db  2Eh	; .
-		db  8Bh	; �
-		db  16h
-		db  80h	; �
-		db    1
-		db  80h	; �
-		db 0C2h	; �
-		db    3
-		db 0FAh	; �
-		db  2Eh	; .
-		db 0A0h	; �
-		db 0A7h	; �
-		db  0Ch
-		db  24h	; $
-		db 0F7h	; �
-		db  2Eh	; .
-		db 0A2h	; �
-		db 0A7h	; �
-		db  0Ch
-		db 0FBh	; �
-		db 0EEh	; �
-		db 0EBh	; �
-		db    0
-		db 0EBh	; �
-		db    0
-		db 0EBh	; �
-		db    0
-		db 0FAh	; �
-		db  2Eh	; .
-		db 0A0h	; �
-		db 0A7h	; �
-		db  0Ch
-		db  0Ch
-		db    8
-		db  2Eh	; .
-		db 0A2h	; �
-		db 0A7h	; �
-		db  0Ch
-		db 0FBh	; �
-		db 0EEh	; �
-		db 0C3h	; �
+
 		db    0
 str_18a0 db  30h	; 0
 		db  36h	; 6
@@ -14181,7 +14133,7 @@ loc_3E83:				; CODE XREF: sub_3E7E+10j sub_3E7E+2Dj
 		jz	short loc_3E83
 		mov	al, es:[di]
 		inc	di
-		mov	si, str_3D7Fh
+		mov	si, str_3D7Fh   ; PCTURBO
 		mov	cx, [word_3D88]
 		cld
 		repe cmpsb

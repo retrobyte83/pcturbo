@@ -67,7 +67,7 @@ for line in bytes:
     
     chk = fil[loc_val]
     if chk!=old:
-        print("fail! {}".format(loc_val))
+        print("fail! {0} code:{1}, file {2}".format(loc_val,chk,old))
         exit()
     else:
         fil[loc_val]=new
