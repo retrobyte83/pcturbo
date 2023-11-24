@@ -494,7 +494,6 @@ loc_263:				; CODE XREF: seg000:0252j
 		call	sub_663
 		jmp	short loc_25A
 ; ���������������������������������������������������������������������������
-sub_26B:
 		cli
 		mov	di, 0E06Eh
 		cmp	byte [di], 0
@@ -524,7 +523,6 @@ loc_291:				; CODE XREF: seg000:0289j
 loc_29A:				; CODE XREF: seg000:loc_29Aj
 		jmp	short loc_29A
 ; ���������������������������������������������������������������������������
-sub_29C:	
 		mov	byte [di+1], 1
 		mov	dx, 400h
 		cli
@@ -1062,187 +1060,355 @@ word_482	dw 8700h		; DATA XREF: seg000:023Aw
 		db  87h	; �
 		db    0
 		db    0
-
-
-                pusha
-                push    es
-                push    ds
-                mov     ax, cs
-                mov     ds, ax
-                mov     word [ds:0E0E8h], 0E5D2h
-                mov     [ds:0E0EAh], cs
-                mov     [ds:0E0E4h], sp
-                mov     [ds:0E0E6h], ss
-                mov     byte [ds:0E0ECh], 2
-                mov     dx, cs
-                mov     ax, 0E406h
-                call    sub_5F6
-                mov     ds:0E400h, ax
-                mov     ds:0E402h, dl
-                mov     dx, es
-                mov     ax, si
-                call    sub_5F6
-                mov     ds:0E3F8h, ax
-                mov     ds:0E3FAh, dl
-                lgdt    ds:0E3F6h
-                mov     di, si
-                add     di, 8
-                mov     ax, 0FFFFh
-                stosw
-                mov     ax, 0
-                stosw
-                mov     ax, cs
-                mov     dx, cx
-                mov     cl, 0Ch
-                shr     ax, cl
-                mov     cx, dx
-                mov     ah, 93h ; 'ô'
-                stosw
-                xor     ax, ax
-                stosw
-                add     di, 10h
-                mov     ax, 0FFFFh
-                stosw
-                mov     ax, 0
-                mov     dx, cs
-                call    sub_5F6
-                stosw
-                mov     al, dl
-                mov     ah, 9Bh ; 'ø'
-                stosw
-                xor     ax, ax
-                stosw
-                mov     ax, 0FFFFh
-                stosw
-                mov     ax, 0
-                mov     dx, ss
-                call    sub_5F6
-                stosw
-                mov     al, dl
-                mov     ah, 93h ; 'ô'
-                stosw
-                mov     al, 80h ; 'Ç'
-                out     70h, al         ; CMOS Memory:
-                                        ;
-                lidt    ds:0E3FEh
-                mov     ax, 1
-                lmsw    ax
-                jmp     20h:0E5A1h
-; ---------------------------------------------------------------------------
-                mov     ax, 28h ; '('
-                mov     ss, ax
-                mov     ax, 10h
-                mov     ds, ax
-                mov     ax, 18h
-                mov     es, ax
-                xor     si, si
-                xor     di, di
-                rep movsw
-                mov     ax, 8
-                mov     ds, ax
-                mov     byte [ds:0E0ECh], 0
-                mov     ax, 8
-                mov     ds, ax
-                mov     byte [ds:0E0EEh], 1
-                mov     dx, 400h
-                mov     al, 1
-                out     dx, al
-
-loc_5D0:                                ; CODE XREF: seg000:loc_5D0j
-                jmp     short loc_5D0
-; ---------------------------------------------------------------------------
-                mov     ax, cs
-                mov     ds, ax
-                mov     ss, [ds:0E0E6h]
-                mov     sp, ds:0E0E4h
-                sti
-                mov     al, 4
-                out     62h, al         ; PC/XT PPI port C. Bits:
-                                        ; 0-3: values of DIP switches
-                                        ; 5: 1=Timer 2 channel out
-                                        ; 6: 1=I/O channel check
-                                        ; 7: 1=RAM parity check error occurred.
-                mov     al, 0
-                out     70h, al         ; CMOS Memory:
-                                        ; used by real-time clock
-                pop     ds
-                pop     es
-                popa
-                mov     byte [cs:0E0EDh], 1
-                mov     ah, cs:0E0ECh
-                iret
-
-; ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦ S U B R O U T I N E ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
-
-
-sub_5F6:         ;proc near               ; CODE XREF: seg000:0529p
-                                        ; seg000:0537p ...
-                push    cx
-                mov     cl, 4
-                rol     dx, cl
-                mov     cx, dx
-                and     dx, 0Fh
-                and     cx, 0FFF0h
-                add     ax, cx
-                adc     dl, 0
-                pop     cx
-                retn
-;sub_5F6         endp
-
-; ---------------------------------------------------------------------------
-                pusha
-                push    ds
-                mov     bx, cs
-                mov     ds, bx
-                cmp     ah, 0
-                jz      short loc_61F
-                cmp     ah, 1
-                jz      short loc_61F
-                jmp     short loc_660
-; ---------------------------------------------------------------------------
-                nop
-
-loc_61F:                                ; CODE XREF: seg000:0615j
-                                        ; seg000:061Aj
-                mov     bh, ah
-                mov     ah, 0Dh
-                int     21h             ; DOS - DISK RESET
-                cmp     bh, 1
-                jz      short loc_62F
-                mov     byte [ds:0E0DFh], 1
-
-loc_62F:                                ; CODE XREF: seg000:0628j
-                in      al, 21h         ; Interrupt controller, 8259A.
-                push    ax
-                mov     al, 0FFh
-                out     21h, al         ; Interrupt controller, 8259A.
-                call    sub_26B
-                mov     byte [di+2], 6
-                call    sub_29C
-                mov     byte [di], 0
-                xor     al, al
-                mov     ds:0FFFDh, al
-
-loc_648:                                ; CODE XREF: seg000:065Bj
-                cmp     al, ds:0FFFDh
-                jz      short loc_656
-                mov     al, ds:0FFFDh
-                not     al
-                mov     ds:0FFFDh, al
-
-loc_656:                                ; CODE XREF: seg000:064Cj
-                cmp     byte [ds:0E0DFh], 1
-                jz      short loc_648
-                pop     ax
-                out     21h, al         ; Interrupt controller, 8259A.
-
-loc_660:                                ; CODE XREF: seg000:061Cj
-                pop     ds
-                popa
-                retf
-
-
-
+		db  60h	; `
+		db    6
+		db  1Eh
+		db  8Ch	; �
+		db 0C8h	; �
+		db  8Eh	; �
+		db 0D8h	; �
+		db 0C7h	; �
+		db    6
+		db 0E8h	; �
+		db 0E0h	; �
+		db 0D2h	; �
+		db 0E5h	; �
+		db  8Ch	; �
+		db  0Eh
+		db 0EAh	; �
+		db 0E0h	; �
+		db  89h	; �
+		db  26h	; &
+		db 0E4h	; �
+		db 0E0h	; �
+		db  8Ch	; �
+		db  16h
+		db 0E6h	; �
+		db 0E0h	; �
+		db 0C6h	; �
+		db    6
+		db 0ECh	; �
+		db 0E0h	; �
+		db    2
+		db  8Ch	; �
+		db 0CAh	; �
+		db 0B8h	; �
+		db    6
+		db 0E4h	; �
+		db 0E8h	; �
+		db 0CAh	; �
+		db    0
+		db 0A3h	; �
+		db    0
+		db 0E4h	; �
+		db  88h	; �
+		db  16h
+		db    2
+		db 0E4h	; �
+		db  8Ch	; �
+		db 0C2h	; �
+		db  8Bh	; �
+		db 0C6h	; �
+		db 0E8h	; �
+		db 0BCh	; �
+		db    0
+		db 0A3h	; �
+		db 0F8h	; �
+		db 0E3h	; �
+		db  88h	; �
+		db  16h
+		db 0FAh	; �
+		db 0E3h	; �
+		db  0Fh
+		db    1
+		db  16h
+		db 0F6h	; �
+		db 0E3h	; �
+		db  8Bh	; �
+		db 0FEh	; �
+		db  83h	; �
+		db 0C7h	; �
+		db    8
+		db 0B8h	; �
+		db 0FFh
+		db 0FFh
+		db 0ABh	; �
+		db 0B8h	; �
+		db    0
+		db    0
+		db 0ABh	; �
+		db  8Ch	; �
+		db 0C8h	; �
+		db  8Bh	; �
+		db 0D1h	; �
+		db 0B1h	; �
+		db  0Ch
+		db 0D3h	; �
+		db 0E8h	; �
+		db  8Bh	; �
+		db 0CAh	; �
+		db 0B4h	; �
+		db  93h	; �
+		db 0ABh	; �
+		db  33h	; 3
+		db 0C0h	; �
+		db 0ABh	; �
+		db  83h	; �
+		db 0C7h	; �
+		db  10h
+		db 0B8h	; �
+		db 0FFh
+		db 0FFh
+		db 0ABh	; �
+		db 0B8h	; �
+		db    0
+		db    0
+		db  8Ch	; �
+		db 0CAh	; �
+		db 0E8h	; �
+		db  84h	; �
+		db    0
+		db 0ABh	; �
+		db  8Ah	; �
+		db 0C2h	; �
+		db 0B4h	; �
+		db  9Bh	; �
+		db 0ABh	; �
+		db  33h	; 3
+		db 0C0h	; �
+		db 0ABh	; �
+		db 0B8h	; �
+		db 0FFh
+		db 0FFh
+		db 0ABh	; �
+		db 0B8h	; �
+		db    0
+		db    0
+		db  8Ch	; �
+		db 0D2h	; �
+		db 0E8h	; �
+		db  6Fh	; o
+		db    0
+		db 0ABh	; �
+		db  8Ah	; �
+		db 0C2h	; �
+		db 0B4h	; �
+		db  93h	; �
+		db 0ABh	; �
+		db 0B0h	; �
+		db  80h	; �
+		db 0E6h	; �
+		db  70h	; p
+		db  0Fh
+		db    1
+		db  1Eh
+		db 0FEh	; �
+		db 0E3h	; �
+		db 0B8h	; �
+		db    1
+		db    0
+		db  0Fh
+		db    1
+		db 0F0h	; �
+		db 0EAh	; �
+		db 0A1h	; �
+		db 0E5h	; �
+		db  20h
+		db    0
+		db 0B8h	; �
+		db  28h	; (
+		db    0
+		db  8Eh	; �
+		db 0D0h	; �
+		db 0B8h	; �
+		db  10h
+		db    0
+		db  8Eh	; �
+		db 0D8h	; �
+		db 0B8h	; �
+		db  18h
+		db    0
+		db  8Eh	; �
+		db 0C0h	; �
+		db  33h	; 3
+		db 0F6h	; �
+		db  33h	; 3
+		db 0FFh
+		db 0F3h	; �
+		db 0A5h	; �
+		db 0B8h	; �
+		db    8
+		db    0
+		db  8Eh	; �
+		db 0D8h	; �
+		db 0C6h	; �
+		db    6
+		db 0ECh	; �
+		db 0E0h	; �
+		db    0
+		db 0B8h	; �
+		db    8
+		db    0
+		db  8Eh	; �
+		db 0D8h	; �
+		db 0C6h	; �
+		db    6
+		db 0EEh	; �
+		db 0E0h	; �
+		db    1
+		db 0BAh	; �
+		db    0
+		db    4
+		db 0B0h	; �
+		db    1
+		db 0EEh	; �
+		db 0EBh	; �
+		db 0FEh	; �
+		db  8Ch	; �
+		db 0C8h	; �
+		db  8Eh	; �
+		db 0D8h	; �
+		db  8Eh	; �
+		db  16h
+		db 0E6h	; �
+		db 0E0h	; �
+		db  8Bh	; �
+		db  26h	; &
+		db 0E4h	; �
+		db 0E0h	; �
+		db 0FBh	; �
+		db 0B0h	; �
+		db    4
+		db 0E6h	; �
+		db  62h	; b
+		db 0B0h	; �
+		db    0
+		db 0E6h	; �
+		db  70h	; p
+		db  1Fh
+		db    7
+		db  61h	; a
+		db  2Eh	; .
+		db 0C6h	; �
+		db    6
+		db 0EDh	; �
+		db 0E0h	; �
+		db    1
+		db  2Eh	; .
+		db  8Ah	; �
+		db  26h	; &
+		db 0ECh	; �
+		db 0E0h	; �
+		db 0CFh	; �
+		db  51h	; Q
+		db 0B1h	; �
+		db    4
+		db 0D3h	; �
+		db 0C2h	; �
+		db  8Bh	; �
+		db 0CAh	; �
+		db  81h	; �
+		db 0E2h	; �
+		db  0Fh
+		db    0
+		db  81h	; �
+		db 0E1h	; �
+		db 0F0h	; �
+		db 0FFh
+		db    3
+		db 0C1h	; �
+		db  80h	; �
+		db 0D2h	; �
+		db    0
+		db  59h	; Y
+		db 0C3h	; �
+		db  60h	; `
+		db  1Eh
+		db  8Ch	; �
+		db 0CBh	; �
+		db  8Eh	; �
+		db 0DBh	; �
+		db  80h	; �
+		db 0FCh	; �
+		db    0
+		db  74h	; t
+		db    8
+		db  80h	; �
+		db 0FCh	; �
+		db    1
+		db  74h	; t
+		db    3
+		db 0EBh	; �
+		db  42h	; B
+		db  90h	; �
+		db  8Ah	; �
+		db 0FCh	; �
+		db 0B4h	; �
+		db  0Dh
+		db 0CDh	; �
+		db  21h	; !
+		db  80h	; �
+		db 0FFh
+		db    1
+		db  74h	; t
+		db    5
+		db 0C6h	; �
+		db    6
+		db 0DFh	; �
+		db 0E0h	; �
+		db    1
+		db 0E4h	; �
+		db  21h	; !
+		db  50h	; P
+		db 0B0h	; �
+		db 0FFh
+		db 0E6h	; �
+		db  21h	; !
+		db 0E8h	; �
+		db  32h	; 2
+		db 0FCh	; �
+		db 0C6h	; �
+		db  45h	; E
+		db    2
+		db    6
+		db 0E8h	; �
+		db  5Ch	; 
+		db 0FCh	; �
+		db 0C6h	; �
+		db    5
+		db    0
+		db  32h	; 2
+		db 0C0h	; �
+		db 0A2h	; �
+		db 0FDh	; �
+		db 0FFh
+		db  3Ah	; :
+		db    6
+		db 0FDh	; �
+		db 0FFh
+		db  74h	; t
+		db    8
+		db 0A0h	; �
+		db 0FDh	; �
+		db 0FFh
+		db 0F6h	; �
+		db 0D0h	; �
+		db 0A2h	; �
+		db 0FDh	; �
+		db 0FFh
+		db  80h	; �
+		db  3Eh	; >
+		db 0DFh	; �
+		db 0E0h	; �
+		db    1
+		db  74h	; t
+		db 0EBh	; �
+		db  58h	; X
+		db 0E6h	; �
+		db  21h	; !
+		db  1Fh
+		db  61h	; a
+		db 0CBh	; �
 
 ; ��������������� S U B	R O U T	I N E ���������������������������������������
 

@@ -3102,7 +3102,7 @@ loc_D30:				; CODE XREF: start+C44j
 loc_D33:
 
 		mov	si, str_5D7h
-		call	sub_1789	; Turbo already loaded. (/! option used. Use Alt grey+ to swap)
+		call	sub_1789	; print Internal format error 286 bios code missing
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h
 
