@@ -1,46 +1,19 @@
 		org 100h
 
-		push	cs
+		push cs
 		pop	ds
 		jmp	loc_CAD 
+	
+port_300h	dw 300h			
+addr_E000h	dw 0E000h	
 
-; ���������������������������������������������������������������������������
-
-byte_16F	db 1			
-byte_175	db 0				
-		    db 0
-byte_177	db 0			
-word_178	dw 700h			
-		db    5
-		db    7
-		db    7
-		db    7
-		db    6
-		db    7
-word_180	dw 300h			
-word_182	dw 0E000h	
-
-			db  "---stack base---ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+			db  "---stack base---sssssssssssssssssssssssssssss"
 stk_base	db 0
 
-str_3A3h	db  0Ah,0Dh,"Cannot access the PCturbo-286e Card. Please check all",0Ah,0Dh,"board jumpers and try again.",0Ah,0Dh,24h
-str_6D2		db  "Already executing on the PCturbo-286!",0Ah,0Dh,24h
-str_80Bh	db  "PCturbo-286"
-str_9D0h	db  0Ah,0Dh,"Ready to load bios...",0Ah,0Dh,24h
-str_0A33h	db  "Unexpected Result",0Ah,0Dh,24h
-
-byte_C06	db 0	
-byte_C1E	db 0			
-str_0C1Fh	db    0
-			db    0
-			db    0
-			db    0
-
-byte_CA7	db 20h			
-byte_CA9	db 0			
-byte_CAB	db 0			
-
-; ���������������������������������������������������������������������������
+str_bad		db  0Ah,0Dh,"Cannot access the PCturbo-286e Card. Please check all",0Ah,0Dh,"board jumpers and try again.",0Ah,0Dh,24h
+str_ok		db  0Ah,0Dh,"Ready to load bios...",0Ah,0Dh,24h
+	
+byte_store	db 20h					
 
 loc_CAD:				
 		mov	ax, cs
@@ -54,31 +27,26 @@ loc_CAD:
 		sti
 		cld		
 	
-		mov	ax, [word_182]
+		mov	ax, [addr_E000h]
 		mov	cl, 4
 		shr	ah, cl
 		sub	ah, 8
-		or	byte [byte_CA7], ah
-		or	byte [byte_CA7], 10h
-				
-		call	sub_183B
-		mov	dx, [word_178]
-		add	dl, 7
-		out	dx, al
-		mov	dx, [word_178]
-		add	dl, 6
-		in	al, dx
-		mov	dx, [word_178]
-		add	dl, 0
-		in	al, dx
-		mov	dx, [word_178]
-		add	dl, 1
+		or	byte [byte_store], ah
+		or	byte [byte_store], 10h	
+		
+		mov	dx, cs:port_300h
+		add	dl, 4
 		mov	al, 0
 		out	dx, al
-		call	sub_1828
-		mov	al, 0Fh
-		call	sub_1854
-		mov	es, [word_182]
+		mov	dx, cs:port_300h
+		add	dl, 3
+		mov	al, cs:byte_store
+		out	dx, al						
+		mov	dx, cs:port_300h
+		mov	al, 0FFh
+		out	dx, al							
+		
+		mov	es, [addr_E000h]
 		mov	word es:0, 5AA5h
 		mov	word es:2, 0A55Ah
 		cmp	word es:0, 5AA5h
@@ -88,23 +56,16 @@ loc_CAD:
 		jmp	short loc_1120
 
 loc_1118:				
-		mov	si, str_3A3h  
+		mov	si, str_bad  
 		call	sub_1789  ; Cannot access the PCturbo 286e Card. Please check all board jumpers and try again.
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h
 
 loc_1120:
-		mov	si, str_9D0h;
+		mov	si, str_ok;
 		call	sub_1789	; Ready to load bios
 		int	20h		; DOS -	PROGRAM	TERMINATION
-					; returns to DOS--identical to INT 21/AH=00h						
-
-loc_12D9:
-
-		mov	si, str_0A33h;
-		call	sub_1789	; Unexpected result
-		int	20h		; DOS -	PROGRAM	TERMINATION
-					; returns to DOS--identical to INT 21/AH=00h						
+					; returns to DOS--identical to INT 21/AH=00h									
 
 ; ���������������������������������������������������������������������������
 
@@ -114,7 +75,6 @@ sub_1789:
 		push	si
 		push	bp
 		mov	bx, 7
-
 loc_1790:
 		mov	al, cs:[si]
 		cmp	al, 24h
@@ -125,8 +85,6 @@ loc_1790:
 					; BL = foreground color	(graphics modes)
 		inc	si
 		jmp	short loc_1790
-
-
 loc_179E:
 		pop	bp
 		pop	si
@@ -134,36 +92,3 @@ loc_179E:
 		pop	ax
 		retn
 ;sub_1789	endp
-
-; ���������������������������������������������������������������������������
-
-sub_1828:
-		mov	dx, cs:word_180
-		mov	al, 0FFh
-		out	dx, al
-		retn
-;sub_1828	endp
-
-sub_183B:
-		mov	dx, cs:word_180
-		add	dl, 4
-		mov	al, 0
-		out	dx, al
-		mov	dx, cs:word_180
-		add	dl, 3
-		mov	al, cs:byte_CA7
-		out	dx, al
-		retn
-;sub_183B	endp
-
-sub_1854:
-		mov	dx, cs:word_180
-		add	dl, 4
-		out	dx, al
-		mov	cs:byte_C06, al
-		retn
-;sub_1854	endp
-
-
-byte_2123	db 9	
-byte_212F	db 9	
