@@ -1,5 +1,6 @@
 		org 100h
 
+		xchg bx, bx
 		push	cs
 		pop	ds
 		jmp	loc_CAD 
@@ -32,6 +33,8 @@ str_0A33h	db  "Unexpected Result",0Ah,0Dh,24h
 byte_C06	db 0	
 byte_C1E	db 0			
 str_0C1Fh	db    0
+			db    0
+			db    0
 			db    0
 			db    0
 			db    0
@@ -73,7 +76,7 @@ loc_1059:
 		push	cs
 		pop	es
 
-		mov	cx, 88h
+		mov	cx, 4h
 		rep movsb
 		pop	ds
 		sti
