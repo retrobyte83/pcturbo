@@ -20,7 +20,6 @@ loc_CAD:
 		mov	ds, ax
 		mov	es, ax
 
-		mov	ax, cs
 		cli
 		mov	ss, ax
 		mov	sp, stk_base
@@ -46,6 +45,7 @@ loc_CAD:
 		mov	al, 0FFh
 		out	dx, al							
 		
+		; Now do the memory read/write check
 		mov	es, [addr_E000h]
 		mov	word es:0, 5AA5h
 		mov	word es:2, 0A55Ah
@@ -67,7 +67,7 @@ loc_1120:
 		int	20h		; DOS -	PROGRAM	TERMINATION
 					; returns to DOS--identical to INT 21/AH=00h									
 
-; ���������������������������������������������������������������������������
+; ------------------------------------------------------------------
 
 sub_1789:
 		push	ax
@@ -91,4 +91,3 @@ loc_179E:
 		pop	bx
 		pop	ax
 		retn
-;sub_1789	endp
