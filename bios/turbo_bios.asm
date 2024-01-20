@@ -10,17 +10,20 @@
 ; Input	MD5   :	3CB3DF90EBC52DAF53F14844AF62DDF0
 
 ; ���������������������������������������������������������������������������
-; File Name   :	turbo_bios
+; File Name   :	C:\DEV\Retrobyte\pcturbo\bin\turbo_bios.bin
 ; Format      :	Binary file
-; Base Address:	0000h Range: 0000h - 2000h Loaded length: 2000h
-
-		; Segment type:	Pure code
-		org 0h
-
+; Base Address:	F000h Range: FE000h - 100000h Loaded length: 2000h
 ; ���������������������������������������������������������������������������
 
+; Segment type:	Pure code
+;seg000		segment	byte public 'CODE' use16
+;		assume cs:seg000
+		;org 0E000h
+;		assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
+
+loc_FE000:				; CODE XREF: seg000:FFF0J
 		cli
-		jmp	loc_165
+		jmp	loc_FE165
 ; ���������������������������������������������������������������������������
 		db  32h	; 2
 		db  38h	; 8
@@ -82,12 +85,31 @@
 		db  20h
 		db  41h	; A
 		db  6Ch	; l
-aLRightsReserve	db 'l Rights Reserved.',0Ah ; DATA XREF: seg000:0224o
-					; sub_663+10r ...
-		db 0Dh,'$',0
+		db  6Ch	; l
+		db  20h
+		db  52h	; R
+		db  69h	; i
+		db  67h	; g
+		db  68h	; h
+		db  74h	; t
+		db  73h	; s
+		db  20h
+		db  52h	; R
+		db  65h	; e
+		db  73h	; s
+		db  65h	; e
+		db  72h	; r
+		db  76h	; v
+		db  65h	; e
+		db  64h	; d
+		db  2Eh	; .
+		db  0Ah
+		db  0Dh
+		db  24h	; $
 		db    0
 		db    0
-unk_58		db    0			; DATA XREF: seg000:0398r
+		db    0
+		db    0
 		db    0
 		db    0
 		db 0E9h	; �
@@ -97,15 +119,16 @@ unk_58		db    0			; DATA XREF: seg000:0398r
 		db  75h	; u
 		db  72h	; r
 		db  62h	; b
-word_62		dw 6Fh			; DATA XREF: sub_1A29+24w
+		db  6Fh	; o
+		db    0
 		db 0EAh	; �
 		db  0Ch
 		db 0E6h	; �
 		db    0
 		db 0F0h	; �
 		db    0
-		db    0
-		db    0
+byte_FE06A	db 0			; DATA XREF: seg000:E24Cr seg000:E34Cr ...
+byte_FE06B	db 0			; DATA XREF: seg000:E180r seg000:E1D1w ...
 		db    0
 		db    0
 		db    0
@@ -237,7 +260,7 @@ word_62		dw 6Fh			; DATA XREF: sub_1A29+24w
 		db    0
 		db    0
 		db    0
-		db    0
+byte_FE0EF	db 0			; DATA XREF: seg000:E329r
 		db    0
 		db    0
 		db 0A4h	; �
@@ -357,7 +380,7 @@ word_62		dw 6Fh			; DATA XREF: sub_1A29+24w
 		db  24h	; $
 ; ���������������������������������������������������������������������������
 
-loc_165:				; CODE XREF: seg000:0001j
+loc_FE165:				; CODE XREF: seg000:E001j
 		mov	dx, 480h
 		mov	ax, 0
 		out	dx, ax
@@ -367,12 +390,13 @@ loc_165:				; CODE XREF: seg000:0001j
 		in	al, dx
 		mov	ax, cs
 		mov	ds, ax
+
 		mov	ax, 30h	; '0'
 		mov	ss, ax
 
 		mov	sp, 100h
-		cmp	byte [0E06Bh], 3
-		jnz	short loc_1A1
+		cmp	ds:byte_FE06B, 3
+		jnz	short loc_FE1A1
 		cld
 		xor	ax, ax
 		xor	di, di
@@ -387,37 +411,37 @@ loc_165:				; CODE XREF: seg000:0001j
 		mov	cx, 8000h
 		rep stosw
 
-loc_1A1:				; CODE XREF: seg000:0185j
+loc_FE1A1:				; CODE XREF: seg000:E185j
 		cld
 		xor	ax, ax
 		mov	bx, ax
 
-loc_1A6:				; CODE XREF: seg000:01C3j
+loc_FE1A6:				; CODE XREF: seg000:E1C3j
 		xor	di, di
 		mov	es, bx
 
 		mov	cx, 800h
 		rep stosw
 
-loc_1AF:				; CODE XREF: seg000:01B7j seg000:01BDj
+loc_FE1AF:				; CODE XREF: seg000:E1B7j seg000:E1BDj
 		add	bx, 100h
 		cmp	bx, 0B000h
-		jz	short loc_1AF
+		jz	short loc_FE1AF
 		cmp	bx, 0B800h
-		jz	short loc_1AF
+		jz	short loc_FE1AF
 		cmp	bx, 0D000h
-		jnz	short loc_1A6
+		jnz	short loc_FE1A6
 		mov	bx, 0F000h
 		mov	es, bx
 
 		xor	di, di
 		mov	cx, 3000h
 		rep stosw
-		mov	byte [0E06Bh], 0A5h ; '�'
+		mov	ds:byte_FE06B, 0A5h ; '�'
 
-loc_1D6:				; CODE XREF: seg000:01DBj
-		cmp	byte [0E06Bh], 0
-		jnz	short loc_1D6
+loc_FE1D6:				; CODE XREF: seg000:E1DBj
+		cmp	ds:byte_FE06B, 0
+		jnz	short loc_FE1D6
 		mov	dx, 480h
 		xor	ax, ax
 		out	dx, ax
@@ -444,7 +468,7 @@ loc_1D6:				; CODE XREF: seg000:01DBj
 		out	21h, al		; Interrupt controller,	8259A.
 		mov	al, 0FFh
 		out	21h, al		; Interrupt controller,	8259A.
-		call	sub_1A29
+		call	sub_FFA29
 		mov	dx, 410h
 		in	al, dx
 		mov	al, 36h	; '6'
@@ -455,8 +479,8 @@ loc_1D6:				; CODE XREF: seg000:01DBj
 		out	40h, al		; Timer	8253-5 (AT: 8254.2).
 		mov	cx, 64h	; 'd'
 
-loc_215:				; CODE XREF: seg000:loc_215j
-		loop	loc_215
+loc_FE215:				; CODE XREF: seg000:loc_FE215j
+		loop	loc_FE215
 		mov	al, 76h	; 'v'
 		out	43h, al		; Timer	8253-5 (AT: 8254.2).
 		mov	al, 0
@@ -464,98 +488,136 @@ loc_215:				; CODE XREF: seg000:loc_215j
 		mov	al, 80h	; '�'
 		out	41h, al		; Timer	8253-5 (AT: 8254.2).
 		push	ds
-		push	aLRightsReserve ; "l Rights Reserved.\n\r$"
+		push	40h
 		pop	ds
 
-		mov	word [1Ah], 1Eh
-		mov	word [1Ch], 1Eh
-		mov	word [80h], 1Eh
-		mov	word [82h], 3Eh ; '>'
+		mov	word ptr ds:1Ah, 1Eh
+		mov	word ptr ds:1Ch, 1Eh
+		mov	word ptr ds:80h, 1Eh
+		mov	word ptr ds:82h, 3Eh ; '>'
 		pop	ds
 
 		mov	al, 0BCh ; '�'
 		out	21h, al		; Interrupt controller,	8259A.
 		sti
 		mov	si, 0E052h
-		call	sub_663
-		cmp	byte cs:0E06Ah, 1
-		jz	short loc_263
+		call	sub_FE663
+		cmp	cs:byte_FE06A, 1
+		jz	short loc_FE263
 		mov	si, 0E0F6h
-		call	sub_663
+		call	sub_FE663
 
-loc_25A:				; CODE XREF: seg000:0269j
+loc_FE25A:				; CODE XREF: seg000:E269j
 		mov	si, 0E11Bh
-		call	sub_663
-		jmp	loc_325
+		call	sub_FE663
+		jmp	loc_FE325
 ; ���������������������������������������������������������������������������
 
-loc_263:				; CODE XREF: seg000:0252j
+loc_FE263:				; CODE XREF: seg000:E252j
 		mov	si, 0E140h
-		call	sub_663
-		jmp	short loc_25A
+		call	sub_FE663
+		jmp	short loc_FE25A
 ; ���������������������������������������������������������������������������
-		cli
-		mov	di, 0E06Eh
-		cmp	byte [di], 0
-		jz	short loc_28C
-		mov	di, 0E08Eh
-		cmp	byte [di], 0
-		jz	short loc_28C
-		mov	di, 0E0AEh
-		cmp	byte [di], 0
-		jz	short loc_28C
-		mov	byte [0E06Dh], 1
-		jmp	short loc_291
-; ���������������������������������������������������������������������������
-		nop
-
-loc_28C:				; CODE XREF: seg000:0272j seg000:027Aj ...
-		mov	byte [di], 1
-		sti
-		retn
-; ���������������������������������������������������������������������������
-
-loc_291:				; CODE XREF: seg000:0289j
-		mov	byte [0E06Dh], 1
-		mov	dx, 400h
-		out	dx, al
-
-loc_29A:				; CODE XREF: seg000:loc_29Aj
-		jmp	short loc_29A
-; ���������������������������������������������������������������������������
-		mov	byte [di+1], 1
-		mov	dx, 400h
-		cli
-		out	dx, al
-		mov	dx, 450h
-
-loc_2A8:				; CODE XREF: seg000:02ABj
-		in	al, dx
-		test	al, 1
-		jnz	short loc_2A8
-		sti
-		mov	dx, 450h
-
-loc_2B1:				; CODE XREF: seg000:02B9j
-		aad
-		aad
-		cmp	byte [di+1], 0
-		jnz	short loc_2B1
-		retn
-; ���������������������������������������������������������������������������
-		mov	byte [di+1], 1
-		mov	dx, 400h
-		cli
-		out	dx, al
-		mov	dx, 450h
-
-loc_2C8:				; CODE XREF: seg000:02CBj
-		in	al, dx
-		test	al, 1
-		jnz	short loc_2C8
-		sti
-		retn
-; ���������������������������������������������������������������������������
+		db 0FAh	; �
+		db 0BFh	; �
+		db  6Eh	; n
+		db 0E0h	; �
+		db  80h	; �
+		db  3Dh	; =
+		db    0
+		db  74h	; t
+		db  18h
+		db 0BFh	; �
+		db  8Eh	; �
+		db 0E0h	; �
+		db  80h	; �
+		db  3Dh	; =
+		db    0
+		db  74h	; t
+		db  10h
+		db 0BFh	; �
+		db 0AEh	; �
+		db 0E0h	; �
+		db  80h	; �
+		db  3Dh	; =
+		db    0
+		db  74h	; t
+		db    8
+		db 0C6h	; �
+		db    6
+		db  6Dh	; m
+		db 0E0h	; �
+		db    1
+		db 0EBh	; �
+		db    6
+		db  90h	; �
+		db 0C6h	; �
+		db    5
+		db    1
+		db 0FBh	; �
+		db 0C3h	; �
+		db 0C6h	; �
+		db    6
+		db  6Dh	; m
+		db 0E0h	; �
+		db    1
+		db 0BAh	; �
+		db    0
+		db    4
+		db 0EEh	; �
+		db 0EBh	; �
+		db 0FEh	; �
+		db 0C6h	; �
+		db  45h	; E
+		db    1
+		db    1
+		db 0BAh	; �
+		db    0
+		db    4
+		db 0FAh	; �
+		db 0EEh	; �
+		db 0BAh	; �
+		db  50h	; P
+		db    4
+		db 0ECh	; �
+		db 0A8h	; �
+		db    1
+		db  75h	; u
+		db 0FBh	; �
+		db 0FBh	; �
+		db 0BAh	; �
+		db  50h	; P
+		db    4
+		db 0D5h	; �
+		db  0Ah
+		db 0D5h	; �
+		db  0Ah
+		db  80h	; �
+		db  7Dh	; }
+		db    1
+		db    0
+		db  75h	; u
+		db 0F6h	; �
+		db 0C3h	; �
+		db 0C6h	; �
+		db  45h	; E
+		db    1
+		db    1
+		db 0BAh	; �
+		db    0
+		db    4
+		db 0FAh	; �
+		db 0EEh	; �
+		db 0BAh	; �
+		db  50h	; P
+		db    4
+		db 0ECh	; �
+		db 0A8h	; �
+		db    1
+		db  75h	; u
+		db 0FBh	; �
+		db 0FBh	; �
+		db 0C3h	; �
 		db  50h	; P
 		db  43h	; C
 		db  74h	; t
@@ -644,39 +706,36 @@ loc_2C8:				; CODE XREF: seg000:02CBj
 		db  24h	; $
 ; ���������������������������������������������������������������������������
 
-loc_325:				; CODE XREF: seg000:0260j seg000:038Ej ...
-		call	sub_1A29
+loc_FE325:				; CODE XREF: seg000:E260j seg000:E38Ej ...
+		call	sub_FFA29
 		sti
-		cmp	byte cs:0E0EFh, 0
-		jz	short loc_349
+		cmp	cs:byte_FE0EF, 0
+		jz	short loc_FE349
 		mov	ax, 0C000h
 		mov	ds, ax
 
-		cmp	word [0], 0AA55h
-		jnz	short loc_349
-		call far [cs:0E345h]
-		jmp	short loc_349
+		cmp	word ptr ds:0, 0AA55h
+		jnz	short loc_FE349
+		call	cs:dword_FE345
+		jmp	short loc_FE349
 ; ���������������������������������������������������������������������������
-		db    3
-		db    0
-		db    0
-		db 0C0h	; �
+dword_FE345	dd 0C0000003h		; DATA XREF: seg000:E33Er
 ; ���������������������������������������������������������������������������
 
-loc_349:				; CODE XREF: seg000:032Fj seg000:033Cj ...
+loc_FE349:				; CODE XREF: seg000:E32Fj seg000:E33Cj ...
 		push	0
 		pop	ds
 
-		cmp	byte cs:0E06Ah, 1
-		jz	short loc_3AC
+		cmp	cs:byte_FE06A, 1
+		jz	short loc_FE3AC
 		mov	si, 3
 
-loc_357:				; CODE XREF: seg000:037Ej
+loc_FE357:				; CODE XREF: seg000:E37Ej
 		xor	ax, ax
 		mov	dx, 0
 		int	13h		; DISK - RESET DISK SYSTEM
 					; DL = drive (if bit 7 is set both hard	disks and floppy disks reset)
-		jb	short loc_378
+		jb	short loc_FE378
 		mov	ah, 2
 		mov	al, 1
 		mov	dx, 0
@@ -688,46 +747,46 @@ loc_357:				; CODE XREF: seg000:037Ej
 					; AL = number of sectors to read, CH = track, CL = sector
 					; DH = head, DL	= drive, ES:BX -> buffer to fill
 					; Return: CF set on error, AH =	status,	AL = number of sectors read
-		jb	short loc_378
-		jmp	0:7C00h
+		jb	short loc_FE378
+		jmp	far ptr	0:7C00h
 ; ���������������������������������������������������������������������������
 
-loc_378:				; CODE XREF: seg000:035Ej seg000:0371j
+loc_FE378:				; CODE XREF: seg000:E35Ej seg000:E371j
 		cmp	ah, 80h	; '�'
-		jz	short loc_39C
+		jz	short loc_FE39C
 		dec	si
-		jnz	short loc_357
+		jnz	short loc_FE357
 
-loc_380:				; CODE XREF: seg000:03D2j
-		cmp	byte cs:0E06Ah, 1
-		jnz	short loc_390
-		mov	byte cs:0E06Ah, 0
-		jmp	short loc_325
+loc_FE380:				; CODE XREF: seg000:E3D2j
+		cmp	cs:byte_FE06A, 1
+		jnz	short loc_FE390
+		mov	cs:byte_FE06A, 0
+		jmp	short loc_FE325
 ; ���������������������������������������������������������������������������
 
-loc_390:				; CODE XREF: seg000:0386j
+loc_FE390:				; CODE XREF: seg000:E386j
 		mov	si, 0E2CFh
-		call	sub_663
+		call	sub_FE663
 		mov	ah, 0
 		int	16h		; KEYBOARD - READ CHAR FROM BUFFER, WAIT IF EMPTY
 					; Return: AH = scan code, AL = character
-		jmp	short loc_325
+		jmp	short loc_FE325
 ; ���������������������������������������������������������������������������
 
-loc_39C:				; CODE XREF: seg000:037Bj
+loc_FE39C:				; CODE XREF: seg000:E37Bj
 		mov	ah, 0
 		int	13h		; DISK - RESET DISK SYSTEM
 					; DL = drive (if bit 7 is set both hard	disks and floppy disks reset)
 		mov	si, 3
 
-loc_3A3:				; CODE XREF: seg000:03D0j
+loc_FE3A3:				; CODE XREF: seg000:E3D0j
 		mov	dx, 80h	; '�'
 		xor	ax, ax
 		int	13h		; DISK - RESET DISK SYSTEM
 					; DL = drive (if bit 7 is set both hard	disks and floppy disks reset)
-		jb	short loc_3CF
+		jb	short loc_FE3CF
 
-loc_3AC:				; CODE XREF: seg000:0352j
+loc_FE3AC:				; CODE XREF: seg000:E352j
 		mov	ah, 2
 		mov	al, 1
 		mov	dx, 80h	; '�'
@@ -739,60 +798,52 @@ loc_3AC:				; CODE XREF: seg000:0352j
 					; AL = number of sectors to read, CH = track, CL = sector
 					; DH = head, DL	= drive, ES:BX -> buffer to fill
 					; Return: CF set on error, AH =	status,	AL = number of sectors read
-		jb	short loc_3CF
-		cmp	word es:7DFEh, 0AA55h
-		jnz	short loc_3CF
-		jmp	0:7C00h
+		jb	short loc_FE3CF
+		cmp	word ptr es:7DFEh, 0AA55h
+		jnz	short loc_FE3CF
+		jmp	far ptr	0:7C00h
 ; ���������������������������������������������������������������������������
 
-loc_3CF:				; CODE XREF: seg000:03AAj seg000:03BFj ...
+loc_FE3CF:				; CODE XREF: seg000:E3AAj seg000:E3BFj ...
 		dec	si
-		jnz	short loc_3A3
-		jmp	short loc_380
+		jnz	short loc_FE3A3
+		jmp	short loc_FE380
 ; ���������������������������������������������������������������������������
-		mov	al, 0B6h ; '�'
-		out	43h, al		; Timer	8253-5 (AT: 8254.2).
-		mov	ax, 533h
-		out	42h, al		; Timer	8253-5 (AT: 8254.2).
-		mov	al, ah
-		out	42h, al		; Timer	8253-5 (AT: 8254.2).
-		in	al, 61h		; PC/XT	PPI port B bits:
-					; 0: Tmr 2 gate	��� OR	03H=spkr ON
-					; 1: Tmr 2 data	ͼ  AND	0fcH=spkr OFF
-					; 3: 1=read high switches
-					; 4: 0=enable RAM parity checking
-					; 5: 0=enable I/O channel check
-					; 6: 0=hold keyboard clock low
-					; 7: 0=enable kbrd
-		mov	ah, al
-		or	al, 3
-		out	61h, al		; PC/XT	PPI port B bits:
-					; 0: Tmr 2 gate	��� OR	03H=spkr ON
-					; 1: Tmr 2 data	ͼ  AND	0fcH=spkr OFF
-					; 3: 1=read high switches
-					; 4: 0=enable RAM parity checking
-					; 5: 0=enable I/O channel check
-					; 6: 0=hold keyboard clock low
-					; 7: 0=enable kbrd
-		xor	cx, cx
-
-loc_3EB:				; CODE XREF: seg000:loc_3EBj
-					; seg000:03EFj
-		loop	loc_3EB
-		dec	bl
-		jnz	short loc_3EB
-		mov	al, ah
-		out	61h, al		; PC/XT	PPI port B bits:
-					; 0: Tmr 2 gate	��� OR	03H=spkr ON
-					; 1: Tmr 2 data	ͼ  AND	0fcH=spkr OFF
-					; 3: 1=read high switches
-					; 4: 0=enable RAM parity checking
-					; 5: 0=enable I/O channel check
-					; 6: 0=hold keyboard clock low
-					; 7: 0=enable kbrd
-		retn
-; ���������������������������������������������������������������������������
-		db 2Fh
+		db 0B0h	; �
+		db 0B6h	; �
+		db 0E6h	; �
+		db  43h	; C
+		db 0B8h	; �
+		db  33h	; 3
+		db    5
+		db 0E6h	; �
+		db  42h	; B
+		db  8Ah	; �
+		db 0C4h	; �
+		db 0E6h	; �
+		db  42h	; B
+		db 0E4h	; �
+		db  61h	; a
+		db  8Ah	; �
+		db 0E0h	; �
+		db  0Ch
+		db    3
+		db 0E6h	; �
+		db  61h	; a
+		db  33h	; 3
+		db 0C9h	; �
+		db 0E2h	; �
+		db 0FEh	; �
+		db 0FEh	; �
+		db 0CBh	; �
+		db  75h	; u
+		db 0FAh	; �
+		db  8Ah	; �
+		db 0C4h	; �
+		db 0E6h	; �
+		db  61h	; a
+		db 0C3h	; �
+		db  2Fh	; /
 		db    0
 		db    0
 		db    0
@@ -828,12 +879,6 @@ loc_3EB:				; CODE XREF: seg000:loc_3EBj
 		db 0E5h	; �
 		db  20h
 		db    0
-word_41A	dw 8700h		; DATA XREF: seg000:0228w
-word_41C	dw 0			; DATA XREF: seg000:022Ew
-		db 0C0h	; �
-		db 0E5h	; �
-		db  20h
-		db    0
 		db    0
 		db  87h	; �
 		db    0
@@ -928,8 +973,18 @@ word_41C	dw 0			; DATA XREF: seg000:022Ew
 		db    0
 		db 0C0h	; �
 		db 0E5h	; �
-word_480	dw 20h			; DATA XREF: seg000:0234w
-word_482	dw 8700h		; DATA XREF: seg000:023Aw
+		db  20h
+		db    0
+		db    0
+		db  87h	; �
+		db    0
+		db    0
+		db 0C0h	; �
+		db 0E5h	; �
+		db  20h
+		db    0
+		db    0
+		db  87h	; �
 		db    0
 		db    0
 		db 0C0h	; �
@@ -1372,7 +1427,7 @@ word_482	dw 8700h		; DATA XREF: seg000:023Aw
 		db    2
 		db    6
 		db 0E8h	; �
-		db  5Ch	; 
+		db  5Ch	; \
 		db 0FCh	; �
 		db 0C6h	; �
 		db    5
@@ -1413,32 +1468,32 @@ word_482	dw 8700h		; DATA XREF: seg000:023Aw
 ; ��������������� S U B	R O U T	I N E ���������������������������������������
 
 
-sub_663:;		proc near		; CODE XREF: seg000:0249p seg000:0257p ...
+sub_FE663	proc near		; CODE XREF: seg000:E249p seg000:E257p ...
 		push	ax
 		push	bx
 		push	bp
 		push	si
 		mov	bx, 7
 
-loc_66A:				; CODE XREF: sub_663+13j
+loc_FE66A:				; CODE XREF: sub_FE663+13j
 		mov	al, cs:[si]
 		cmp	al, 24h	; '$'
-		jz	short loc_678
+		jz	short loc_FE678
 		mov	ah, 0Eh
 		int	10h		; - VIDEO - WRITE CHARACTER AND	ADVANCE	CURSOR (TTY WRITE)
 					; AL = character, BH = display page (alpha modes)
 					; BL = foreground color	(graphics modes)
 		inc	si
-		jmp	short loc_66A
+		jmp	short loc_FE66A
 ; ���������������������������������������������������������������������������
 
-loc_678:				; CODE XREF: sub_663+Cj
+loc_FE678:				; CODE XREF: sub_FE663+Cj
 		pop	si
 		pop	bp
 		pop	bx
 		pop	ax
 		retn
-;sub_663		endp
+sub_FE663	endp
 
 ; ���������������������������������������������������������������������������
 		db  50h	; P
@@ -3007,7 +3062,7 @@ loc_678:				; CODE XREF: sub_663+Cj
 		db 0F6h	; �
 		db  5Eh	; ^
 		db  8Bh	; �
-		db  5Ch	; 
+		db  5Ch	; \
 		db    6
 		db  8Bh	; �
 		db  4Ch	; L
@@ -3260,7 +3315,7 @@ loc_678:				; CODE XREF: sub_663+Cj
 		db 0FEh	; �
 		db 0FEh	; �
 		db 0FEh	; �
-		db  5Ch	; 
+		db  5Ch	; \
 		db  7Ch	; |
 		db  1Ch
 		db 0FEh	; �
@@ -6481,36 +6536,37 @@ loc_678:				; CODE XREF: sub_663+Cj
 ; ��������������� S U B	R O U T	I N E ���������������������������������������
 
 
-sub_1A29:;	proc near		; CODE XREF: seg000:01FFp
-					; seg000:loc_325p
+sub_FFA29	proc near		; CODE XREF: seg000:E1FFp
+					; seg000:loc_FE325p
 		cli
 		cld
 		push	cs
 		pop	ds
+
 		mov	si, 0FFCFh
 		xor	ax, ax
 		mov	es, ax
 		xor	di, di
 		mov	cx, 8
 
-loc_1A39:				; CODE XREF: sub_1A29+15j
+loc_FFA39:				; CODE XREF: sub_FFA29+15j
 		lodsw
 		stosw
 		mov	ax, cs
 		stosw
-		loop	loc_1A39
+		loop	loc_FFA39
 		mov	si, 0FEF3h
 		mov	cx, 18h
 
-loc_1A46:				; CODE XREF: sub_1A29+21j
+loc_FFA46:				; CODE XREF: sub_FFA29+21j
 		movsw
 		mov	ax, cs
 		stosw
-		loop	loc_1A46
+		loop	loc_FFA46
 		sti
-		mov	word es:word_62, 0F600h
+		mov	word ptr es:62h, 0F600h
 		retn
-;sub_1A29	endp
+sub_FFA29	endp
 
 ; ���������������������������������������������������������������������������
 		db    0
@@ -7948,11 +8004,9 @@ loc_1A46:				; CODE XREF: sub_1A29+21j
 		db    0
 		db    0
 		db    0
-		db 0EAh	; �
-		db    0
-		db 0E0h	; �
-		db    0
-		db 0F0h	; �
+; ���������������������������������������������������������������������������
+		jmp	far ptr	loc_FE000
+; ���������������������������������������������������������������������������
 		db  31h	; 1
 		db  31h	; 1
 		db  2Fh	; /
@@ -7964,7 +8018,7 @@ loc_1A46:				; CODE XREF: sub_1A29+21j
 		db 0FFh
 		db 0FFh
 		db 0FFh
-;seg000		ends
+seg000		ends
 
 
-;		end
+		end

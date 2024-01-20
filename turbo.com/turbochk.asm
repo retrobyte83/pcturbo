@@ -13,7 +13,7 @@ stk_base	db 0
 str_bad		db  0Ah,0Dh,"Cannot access the PCturbo-286e Card. Please check all",0Ah,0Dh,"board jumpers and try again.",0Ah,0Dh,24h
 str_ok		db  0Ah,0Dh,"Ready to load bios...",0Ah,0Dh,24h
 	
-byte_store	db 20h					
+byte_var	db 20h					
 
 loc_CAD:				
 		mov	ax, cs
@@ -30,8 +30,8 @@ loc_CAD:
 		mov	cl, 4
 		shr	ah, cl
 		sub	ah, 8
-		or	byte [byte_store], ah
-		or	byte [byte_store], 10h	
+		or	byte [byte_var], ah
+		or	byte [byte_var], 10h	
 		
 		mov	dx, cs:port_300h
 		add	dl, 4
@@ -39,7 +39,7 @@ loc_CAD:
 		out	dx, al
 		mov	dx, cs:port_300h
 		add	dl, 3
-		mov	al, cs:byte_store
+		mov	al, cs:byte_var
 		out	dx, al						
 		mov	dx, cs:port_300h
 		mov	al, 0FFh
